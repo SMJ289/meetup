@@ -1,6 +1,5 @@
 import { api, LightningElement, track } from 'lwc';
 import saveRegistration from '@salesforce/apex/MeetupRegistrationController.saveRegistration';
-//import submitScoreAction from '@salesforce/apex/lwcAppExampleApex.submitScoreAction';
 import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import {NavigationMixin} from 'lightning/navigation';
 
@@ -17,7 +16,6 @@ export default class insertRecordCustomObjectLwc extends NavigationMixin (Lightn
    registrationHandleChange(event){
         if(event.target.name == 'registrationFirstName'){
         this.registrationObjFirstName = event.target.value;  
-        //window.console.log('scoreObName ##' + this.scoreObName);
         }
       if(event.target.name == 'registrationLastName'){
         this.registrationObjLastName = event.target.value;  
@@ -43,21 +41,23 @@ export default class insertRecordCustomObjectLwc extends NavigationMixin (Lightn
           });
           this.dispatchEvent(toastEvent);
 
-          /*Start Navigation*/
           this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
             attributes: {
-                recordId: this.scoreRecoreId,
+                recordId: this.registrationRecordId,
                 objectApiName: 'MeetupRegistration__c',
                 actionName: 'view'
             },
          });
-         /*End Navigation*/
-
     })
     .catch(error =>{
-       this.errorMsg=error.message;
-       window.console.log(this.error);
+      const toastEvent = new ShowToastEvent({
+        title:'Oops!',
+        message: error.body.message,
+        variant:'error'
+      });
+      this.dispatchEvent(toastEvent); 
+      window.console.log(error.body.message);
     });
  }
 }
