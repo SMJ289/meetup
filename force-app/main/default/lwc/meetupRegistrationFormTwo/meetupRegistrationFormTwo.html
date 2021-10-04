@@ -1,0 +1,19 @@
+<template>
+  <lightning-card title="Register to a Meetup">
+
+      <div class="slds-wrap slds-grid">
+          <div class="slds-col slds-size_6-of-12 slds-p-horizontal--small slds-m-bottom--medium"><p>
+            <lightning-input label="First Name" type="text" value={registrationObjFirstName} name="registrationFirstName" required="true" onchange={registrationHandleChange}></lightning-input></p></div>         
+          <div class="slds-col slds-size_6-of-12 slds-p-horizontal--small slds-m-bottom--medium"><p>
+            <lightning-input label="Last Name" type="text" value={registrationObjLastName} name="registrationLastName" required="true" onchange={registrationHandleChange}></lightning-input></p></div>         
+          <div class="slds-col slds-size_6-of-12 slds-p-horizontal--small slds-m-bottom--medium"><p>
+            <lightning-input label="Email" type="email" value={registrationObjEmail} name="registrationEmail" required="true" onchange={registrationHandleChange}></lightning-input></p></div>         
+          <div class="slds-col slds-size_6-of-12 slds-p-horizontal--small slds-m-bottom--medium"><p>
+            <lightning-input label="Registration Code" type="text" value={registrationObjCode} name="registrationCode" read-only="true" ></lightning-input></p></div>
+           <br/>  <br/>
+          <div class="slds-text-align--center slds-m-top--medium" style="text-align:center; width:40px; margin:auto;">
+              <lightning-button type="brand" label="Register" variant="brand" size="small" onclick={submitAction}></lightning-button>
+          </div>
+     </div>
+  </lightning-card>
+</template>
