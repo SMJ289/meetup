@@ -72,7 +72,7 @@ public class TestMeetupRegistrationController {
         try {
           MeetupRegistrationController.saveRegistration('Taylor', 'Myers', 'tm@gmail.com', registrationCode);
         } catch (AuraHandledException e) {
-          System.assertEquals('This Meetup is closed!', e.getMessage());
+          System.assertEquals('This Meetup is full or closed!', e.getMessage());
         }
     }
 }

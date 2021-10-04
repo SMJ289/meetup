@@ -2,13 +2,13 @@ public with sharing class MeetupRegistrationController {
   @AuraEnabled
   public static MeetupRegistration__c saveRegistration(String firstName, String lastName, string email, string code) {
       MeetupRegistration__c newRegistration = new MeetupRegistration__c();
-      //Need to check if meetup full and have error message
+
       Meetup__c meetup = findMeetup(code);
 
       ID meetupId = meetup.ID;
       
-      if (meetup.Status__c == 'Closed') {
-        String message = 'This Meetup is closed!';
+      if (meetup.Status__c == 'Closed' || isMeetupFull(meetup)) {
+        String message = 'This Meetup is full or closed!';
         AuraHandledException error = new AuraHandledException(message);
         error.setMessage(message);
         throw error;
@@ -54,6 +54,13 @@ public with sharing class MeetupRegistrationController {
   
   // Automatically close event if full
   private static void closeMeetupIfFull(Meetup__c meetup) {
+    if (isMeetupFull(meetup)) {
+      meetup.Status__c = 'Closed';
+      update meetup;
+    }
+  }
+
+  private static Boolean isMeetupFull(Meetup__c meetup) {
     ID meetupId = meetup.Id;
     Integer registrationLimit = meetup.RegistrationLimit__c.intValue();
 
@@ -64,10 +71,7 @@ public with sharing class MeetupRegistrationController {
     ];
     
     Integer currentRegistrations = allRegistrations.size();
-    
-    if (currentRegistrations >= registrationLimit) {
-      meetup.Status__c = 'Closed';
-      update meetup;
-    }
+
+    Return currentRegistrations >= registrationLimit;
   }
 }
