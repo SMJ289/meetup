@@ -5,23 +5,14 @@ public with sharing class MeetupRegistrationController {
       //Need to check if meetup full and have error message
       Meetup__c meetup = findMeetup(code);
 
-      Integer registrationLimit = meetup.RegistrationLimit__c.intValue();
       ID meetupId = meetup.ID;
       
-      // Check for duplicate emails. Could be trigger.
-      List<MeetupRegistration__c> registrationsWithEmail = [
-        SELECT Id
-        FROM MeetupRegistration__c
-        WHERE Meetup__c = :meetupId
-        AND Email__c = :email
-      ];
-
       if (meetup.Status__c == 'Closed') {
         String message = 'This Meetup is closed!';
         AuraHandledException error = new AuraHandledException(message);
         error.setMessage(message);
         throw error;
-      } else if (registrationsWithEmail.size() > 0) {
+      } else if (isEmailAlreadyRegistered(meetupId, email)) {
         String message = 'This email is already registered to this event!';
         AuraHandledException error = new AuraHandledException(message);
         error.setMessage(message);
@@ -35,19 +26,7 @@ public with sharing class MeetupRegistrationController {
         insert newRegistration;
       }
       
-      List<MeetupRegistration__c> allRegistrations = [
-        SELECT Id
-        FROM MeetupRegistration__c
-        WHERE Meetup__c = :meetupId
-      ];
-      
-      Integer currentRegistrations = allRegistrations.size();
-      
-      // Automatically close event if full. Could be trigger.
-      if (currentRegistrations >= registrationLimit) {
-        meetup.Status__c = 'Closed';
-        update meetup;
-      }
+      closeMeetupIfFull(meetup);
 
       return newRegistration;
   }
@@ -59,5 +38,36 @@ public with sharing class MeetupRegistrationController {
       WHERE RegistrationCode__c = :code
     ];
     return meetup;
+  }
+  
+  // Check for duplicate emails
+  private static Boolean isEmailAlreadyRegistered(ID meetupId, String email) {
+    List<MeetupRegistration__c> registrationsWithEmail = [
+      SELECT Id
+      FROM MeetupRegistration__c
+      WHERE Meetup__c = :meetupId
+      AND Email__c = :email
+    ];
+
+    return registrationsWithEmail.size() > 0;
+  }
+  
+  // Automatically close event if full
+  private static void closeMeetupIfFull(Meetup__c meetup) {
+    ID meetupId = meetup.Id;
+    Integer registrationLimit = meetup.RegistrationLimit__c.intValue();
+
+    List<MeetupRegistration__c> allRegistrations = [
+      SELECT Id
+      FROM MeetupRegistration__c
+      WHERE Meetup__c = :meetupId
+    ];
+    
+    Integer currentRegistrations = allRegistrations.size();
+    
+    if (currentRegistrations >= registrationLimit) {
+      meetup.Status__c = 'Closed';
+      update meetup;
+    }
   }
 }
