@@ -9,12 +9,13 @@ export default class NewMeetupForm extends LightningElement {
     selectedFields = [MEETUP_NAME, REGISTRATION_LIMIT];
     
     handleSuccess(event) {
-      const evt = new ShowToastEvent({
-          title: "Meetup created!",
-          message: "Record ID: " + event.detail.id,
-          variant: "success"
+      this.recordId = event.detail.id;
+      const toastEvent = new ShowToastEvent({
+          title: 'Success!',
+          message: 'Meetup Created!',
+          variant: 'success'
       });
-      this.dispatchEvent(evt);
+      this.dispatchEvent(toastEvent);
       const editForm = this.template.querySelector('lightning-record-form');
       editForm.recordId = null;
   }

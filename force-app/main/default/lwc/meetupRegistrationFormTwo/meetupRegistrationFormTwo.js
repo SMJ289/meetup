@@ -41,9 +41,6 @@ export default class insertRecordCustomObjectLwc extends NavigationMixin (Lightn
       if(event.target.name == 'registrationEmail'){
         this.registrationObjEmail = event.target.value;  
       }
-      /*if(event.target.name == 'registrationCode'){
-        this.registrationObjCode = event.target.value;  
-      }*/
  }
 
  submitAction(){
@@ -65,7 +62,7 @@ export default class insertRecordCustomObjectLwc extends NavigationMixin (Lightn
                 objectApiName: 'MeetupRegistration__c',
                 actionName: 'view'
             },
-         });
+          });
     })
 
     .catch(error =>{
